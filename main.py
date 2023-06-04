@@ -1,13 +1,20 @@
 import json
 import urllib.request
+from fastapi import FastAPI, Request
+
 from fastapi import FastAPI
 from typing import List
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
 @app.get("/")
-def read_root():
-    return {"Aplication": "simple Fastapi aplication"}
+def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/posts")
 async def get_posts() -> List[dict]:
