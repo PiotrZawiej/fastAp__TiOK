@@ -1,7 +1,7 @@
 import json
 import urllib.request
 from fastapi import FastAPI, Request
-
+from fastapi.responses import RedirectResponse
 from fastapi import FastAPI
 from typing import List
 from fastapi.staticfiles import StaticFiles
@@ -13,6 +13,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
+def read_root(request: Request):
+    return RedirectResponse(url="/login")
+
+@app.get("/login")
 def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
