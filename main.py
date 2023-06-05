@@ -1,12 +1,15 @@
 import json
 import urllib.request
+
+import fastapi
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
 from fastapi import FastAPI
 from typing import List
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from starlette.templating import _TemplateResponse
+from fastapi.responses import HTMLResponse
+import requests
 
 app = FastAPI()
 
@@ -21,12 +24,24 @@ def read_root(request: Request):
 def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.get("/posts")
-async def get_posts(request: Request) -> _TemplateResponse:
-    with urllib.request.urlopen(f"https://jsonplaceholder.typicode.com/posts") as response:
-        data = response.read().decode()
-        posts = json.loads(data)
-        return templates.TemplateResponse("index1.html", {"request": request})
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+
+app = FastAPI()
+
+@app.get("/posts/", response_class=HTMLResponse)
+async def read_posts(request: Request):
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/posts")
+        response.raise_for_status()
+        posts = response.json()
+    except (requests.RequestException, ValueError) as e:
+        return {"error": str(e)}
+
+    return templates.TemplateResponse(
+        "index1.html",
+        {"request": request, "posts": posts}
+    )
 
 @app.get("/posts/{post_id}/comments")
 async def get_post_comments(post_id: int) -> List[dict]:
