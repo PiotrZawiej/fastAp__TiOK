@@ -1,15 +1,13 @@
 import json
 import urllib.request
-
-import fastapi
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
-from fastapi import FastAPI
 from typing import List
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
 import requests
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
@@ -23,11 +21,6 @@ def read_root(request: Request):
 @app.get("/login")
 def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
-
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
-
-app = FastAPI()
 
 @app.get("/posts/", response_class=HTMLResponse)
 async def read_posts(request: Request):
